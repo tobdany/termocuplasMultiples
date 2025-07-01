@@ -17,14 +17,13 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "Max31856.h"
-#include<stdio.h>
-#include<string.h>
+#include "app_main.h" // <-- Nuevo include para tu aplicación
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -34,14 +33,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define SENSOR1_CS_PORT GPIOA
-#define SENSOR1_CS_PIN  GPIO_PIN_4 // Por ejemplo, PA4
-
-#define SENSOR2_CS_PORT GPIOA
-#define SENSOR2_CS_PIN  GPIO_PIN_0
-
-#define SENSOR3_CS_PORT GPIOA
-#define SENSOR3_CS_PIN  GPIO_PIN_1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -51,9 +42,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 SPI_HandleTypeDef hspi1;
-
 UART_HandleTypeDef huart1;
-
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -69,10 +58,6 @@ static void MX_USART1_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-Max31856_HandleTypeDef mySensor1;
-Max31856_HandleTypeDef mySensor2;
-Max31856_HandleTypeDef mySensor3;
-
 /* USER CODE END 0 */
 
 /**
@@ -81,35 +66,7 @@ Max31856_HandleTypeDef mySensor3;
   */
 int main(void)
 {
-
   /* USER CODE BEGIN 1 */
-		char MSG[100];
-       char MSG0[100];
-       char MSG1[100]=  "Could not initialize thermocouple\n\r";
-       char MSG3[100]=  "$$***************************************$$\n\r";
-       char MSG2[100]=  "Thermocouple type: ";
-       char MSG4[100]=  "B Type\n\r";
-       char MSG5[100]=  "E Type\n\r";
-       char MSG6[100]=  "J Type\n\r";
-       char MSG7[100]=  "K Type\n\r";
-       char MSG8[100]=  "N Type\n\r";
-       char MSG9[100]=  "R Type\n\r";
-       char MSG10[100]= "S Type\n\r";
-       char MSG11[100]= "T Type\n\r";
-       char MSG12[100]= "Voltage x8 Gain mode\n\r";
-       char MSG13[100]= "Voltage x8 Gain mode\n\r";
-       char MSG14[100]= "Unknown\n\r";
-       char MSG15[100]= "Cold Junction Range Fault\n\r";
-       char MSG16[100]= "Thermocouple Range Fault\n\r";
-       char MSG17[100]= "Cold Junction High Fault\n\r";
-       char MSG18[100]= "Cold Junction Low Fault\n\r";
-       char MSG19[100]= "Thermocouple High Fault\n\r";
-       char MSG20[100]= "Thermocouple Low Fault\n\r";
-       char MSG21[100]= "Over/Under Voltage Fault\n\r";
-       char MSG22[100]= "hermocouple Open Faultn\r";
-       char MSG_temp1[100];
-       char MSG_temp2[100];
-       char MSG_temp3[100];
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -133,25 +90,7 @@ int main(void)
   MX_SPI1_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  //se queda en un bucle, si no se inicializó correctamente el SPI
-  /*if(HAL_SPI_Init(&hspi1) != HAL_OK){
-  	while (1) HAL_Delay(10);
-  }*/
-
-  //erores de inicialización para cada sensor
-  if (!MAX31856_Init(&mySensor1, &hspi1, SENSOR1_CS_PORT, SENSOR1_CS_PIN)) {
-	  HAL_UART_Transmit(&huart1,(uint8_t*)MSG1,sizeof(MSG1), 100);
-    }
-    if (!MAX31856_Init(&mySensor2, &hspi1, SENSOR2_CS_PORT, SENSOR2_CS_PIN)) {
-    	HAL_UART_Transmit(&huart1,(uint8_t*)MSG1,sizeof(MSG1), 100);
-    	while (1) HAL_Delay(10);
-    }
-    if (!MAX31856_Init(&mySensor3, &hspi1, SENSOR3_CS_PORT, SENSOR3_CS_PIN)) {
-    	HAL_UART_Transmit(&huart1,(uint8_t*)MSG1,sizeof(MSG1), 100);
-    	while (1) HAL_Delay(10);
-    }
-
-  HAL_Delay(2000);
+  app_main();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -162,39 +101,9 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	//se envía a la UART los valores de la temperatura
-	  sprintf(MSG_temp1,"Thermocouple 1 Temp: %.2f degrees Celsius\n\r",
-			  MAX31856_ReadThermocoupleTemperature(&mySensor1));
-	  sprintf(MSG_temp2,"Thermocouple 2 Temp: %.2f degrees Celsius\n\r",
-	  			  MAX31856_ReadThermocoupleTemperature(&mySensor2));
-	  sprintf(MSG_temp3,"Thermocouple 3 Temp: %.2f degrees Celsius\n\r",
-	  	  			  MAX31856_ReadThermocoupleTemperature(&mySensor3));
-    HAL_UART_Transmit(&huart1,(uint8_t *) MSG_temp1, sizeof(MSG_temp1), 100);
-    HAL_UART_Transmit(&huart1,(uint8_t *) MSG_temp2, sizeof(MSG_temp2), 100);
-    HAL_UART_Transmit(&huart1,(uint8_t *) MSG_temp3, sizeof(MSG_temp3), 100);
-    HAL_Delay(200);
-
-
-
-
-    /*uint8_t fault = readFault();
-    if (fault) {
-    if (fault & MAX31856_FAULT_CJRANGE)  HAL_UART_Transmit(&huart1,(uint8_t*)MSG15,sizeof(MSG15), 100);
-    if (fault & MAX31856_FAULT_TCRANGE)  HAL_UART_Transmit(&huart1,(uint8_t*)MSG16,sizeof(MSG16), 100);
-    if (fault & MAX31856_FAULT_CJHIGH)   HAL_UART_Transmit(&huart1,(uint8_t*)MSG17,sizeof(MSG17), 100);
-    if (fault & MAX31856_FAULT_CJLOW)    HAL_UART_Transmit(&huart1,(uint8_t*)MSG18,sizeof(MSG18), 100);
-    if (fault & MAX31856_FAULT_TCHIGH)   HAL_UART_Transmit(&huart1,(uint8_t*)MSG19,sizeof(MSG19), 100);
-    if (fault & MAX31856_FAULT_TCLOW)    HAL_UART_Transmit(&huart1,(uint8_t*)MSG20,sizeof(MSG20), 100);
-    if (fault & MAX31856_FAULT_OVUV)     HAL_UART_Transmit(&huart1,(uint8_t*)MSG21,sizeof(MSG21), 100);
-    if (fault & MAX31856_FAULT_OPEN)     HAL_UART_Transmit(&huart1,(uint8_t*)MSG22,sizeof(MSG22), 100);
-    }
-    HAL_UART_Transmit(&huart1,(uint8_t *) MSG, sizeof(MSG), 100);
-    HAL_Delay(1000);
-    */
+    /* USER CODE END 3 */
   }
-  /* USER CODE END 3 */
 }
-
 /**
   * @brief System Clock Configuration
   * @retval None

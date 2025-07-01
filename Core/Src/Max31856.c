@@ -1,19 +1,16 @@
-#include "Max31856.h" // Asegúrate de que este archivo de cabecera contenga la definición de Max31856_HandleTypeDef y los enums/defines necesarios.
-#include <math.h>    // Para NAN
-#include <stdio.h>   // Para printf, si se usa para depuración
+#include "Max31856.h"
+#include <math.h>
+#include <stdio.h>
 
 
 // --- Funciones internas de bajo nivel para comunicación SPI ---
 bool MAX31856_Init(Max31856_HandleTypeDef* hmax, SPI_HandleTypeDef* hspi, GPIO_TypeDef* cs_port, uint16_t cs_pin) {
-  // Almacena los handles y pines en la estructura del sensor
   hmax->hspi = hspi;
   hmax->cs_port = cs_port;
   hmax->cs_pin = cs_pin;
 
-  // Asegura que el pin CS esté en alto (deseleccionado) al inicio
   HAL_GPIO_WritePin(hmax->cs_port, hmax->cs_pin, GPIO_PIN_SET);
-
-  hmax->initialized = true; // Asumimos éxito si el handle SPI es válido.
+  hmax->initialized = true;
 
   // Configuración inicial del sensor MAX31856
   // Desactiva la máscara de fallas (assert on any fault)
@@ -42,15 +39,10 @@ bool MAX31856_Init(Max31856_HandleTypeDef* hmax, SPI_HandleTypeDef* hspi, GPIO_T
 void readRegisterN(Max31856_HandleTypeDef* hmax, uint8_t addr, uint8_t buffer[], uint8_t n) {
   addr &= 0x7F; // MSB=0 para lectura, asegura que el bit superior no esté seteado
 
-  // Baja el pin CS del sensor específico para seleccionarlo
+
   HAL_GPIO_WritePin(hmax->cs_port, hmax->cs_pin, GPIO_PIN_RESET);
-
-  // Transmite la dirección del registro
   HAL_SPI_Transmit(hmax->hspi, &addr, 1, SPI_DELAY);
-  // Recibe los datos del registro
   HAL_SPI_Receive(hmax->hspi, buffer, n, SPI_DELAY);
-
-  // Sube el pin CS del sensor específico para deseleccionarlo
   HAL_GPIO_WritePin(hmax->cs_port, hmax->cs_pin, GPIO_PIN_SET);
 }
 
@@ -68,11 +60,7 @@ void writeRegister8(Max31856_HandleTypeDef* hmax, uint8_t addr, uint8_t data) {
 
   // Baja el pin CS del sensor específico para seleccionarlo
   HAL_GPIO_WritePin(hmax->cs_port, hmax->cs_pin, GPIO_PIN_RESET);
-
-  // Transmite la dirección del registro y el dato
   HAL_SPI_Transmit(hmax->hspi, buffer, 2, SPI_DELAY);
-
-  // Sube el pin CS del sensor específico para deseleccionarlo
   HAL_GPIO_WritePin(hmax->cs_port, hmax->cs_pin, GPIO_PIN_SET);
 }
 
@@ -143,7 +131,6 @@ uint32_t readRegister24(Max31856_HandleTypeDef* hmax, uint8_t addr) {
   * @retval El modo de conversión (MAX31856_ONESHOT o MAX31856_CONTINUOUS).
   */
 max31856_conversion_mode_t MAX31856_GetConversionMode(Max31856_HandleTypeDef* hmax) {
-  // El modo de conversión se almacena en la estructura del handle
   return hmax->conversionMode;
 }
 
