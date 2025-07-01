@@ -178,7 +178,7 @@ max31856_thermocoupletype_t MAX31856_GetThermocoupleType(Max31856_HandleTypeDef*
   return (max31856_thermocoupletype_t)(t);
 }
 
-/**
+/** lol
   * @brief  Lee el registro de fallas del sensor.
   * @param  hmax: Puntero a la estructura de handle del sensor MAX31856.
   * @retval El valor del registro de estado de fallas.
