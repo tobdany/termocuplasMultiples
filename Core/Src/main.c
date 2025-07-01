@@ -38,7 +38,7 @@
 #define SENSOR1_CS_PIN  GPIO_PIN_4 // Por ejemplo, PA4
 
 #define SENSOR2_CS_PORT GPIOA
-#define SENSOR2_CS_PIN  GPIO_PIN_0 // Por ejemplo, PA5
+#define SENSOR2_CS_PIN  GPIO_PIN_0
 
 #define SENSOR3_CS_PORT GPIOA
 #define SENSOR3_CS_PIN  GPIO_PIN_1
@@ -83,7 +83,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  //char MSG[100];
+		char MSG[100];
        char MSG0[100];
        char MSG1[100]=  "Could not initialize thermocouple\n\r";
        char MSG3[100]=  "$$***************************************$$\n\r";
@@ -134,9 +134,9 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   //se queda en un bucle, si no se inicializó correctamente el SPI
-  if(HAL_SPI_Init(&hspi1) != HAL_OK){
+  /*if(HAL_SPI_Init(&hspi1) != HAL_OK){
   	while (1) HAL_Delay(10);
-  }
+  }*/
 
   //erores de inicialización para cada sensor
   if (!MAX31856_Init(&mySensor1, &hspi1, SENSOR1_CS_PORT, SENSOR1_CS_PIN)) {
@@ -319,7 +319,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, SPI_CS2_Pin|SPI_CS3_Pin|MAX_FAULT_Pin|SPI1_CS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, SPI_CS2_Pin|SPI_CS3_Pin|MAX_FAULT_Pin|SPI1_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : SPI_CS2_Pin SPI_CS3_Pin MAX_FAULT_Pin SPI1_CS_Pin */
   GPIO_InitStruct.Pin = SPI_CS2_Pin|SPI_CS3_Pin|MAX_FAULT_Pin|SPI1_CS_Pin;
