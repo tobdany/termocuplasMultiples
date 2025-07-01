@@ -54,10 +54,6 @@ SPI_HandleTypeDef hspi1;
 
 UART_HandleTypeDef huart1;
 
-Max31856_HandleTypeDef mySensor1;
-Max31856_HandleTypeDef mySensor2;
-Max31856_HandleTypeDef mySensor3;
-
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -73,6 +69,9 @@ static void MX_USART1_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+Max31856_HandleTypeDef mySensor1;
+Max31856_HandleTypeDef mySensor2;
+Max31856_HandleTypeDef mySensor3;
 
 /* USER CODE END 0 */
 
@@ -84,7 +83,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  char MSG[100];
+  //char MSG[100];
        char MSG0[100];
        char MSG1[100]=  "Could not initialize thermocouple\n\r";
        char MSG3[100]=  "$$***************************************$$\n\r";
@@ -133,10 +132,6 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI1_Init();
   MX_USART1_UART_Init();
-
-
-
-
   /* USER CODE BEGIN 2 */
   //se queda en un bucle, si no se inicializó correctamente el SPI
   if(HAL_SPI_Init(&hspi1) != HAL_OK){
