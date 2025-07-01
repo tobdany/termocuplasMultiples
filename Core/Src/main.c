@@ -174,11 +174,9 @@ int main(void)
 	  			  MAX31856_ReadThermocoupleTemperature(&mySensor2));
 	  sprintf(MSG_temp3,"Thermocouple 3 Temp: %.2f degrees Celsius\n\r",
 	  	  			  MAX31856_ReadThermocoupleTemperature(&mySensor3));
-    HAL_UART_Transmit(&huart1,(uint8_t *) MSG_temp1, sizeof(MSG), 100);
-    HAL_Delay(200);
-    HAL_UART_Transmit(&huart1,(uint8_t *) MSG_temp2, sizeof(MSG0), 100);
-    HAL_Delay(200);
-    HAL_UART_Transmit(&huart1,(uint8_t *) MSG_temp3, sizeof(MSG3), 100);
+    HAL_UART_Transmit(&huart1,(uint8_t *) MSG_temp1, sizeof(MSG_temp1), 100);
+    HAL_UART_Transmit(&huart1,(uint8_t *) MSG_temp2, sizeof(MSG_temp2), 100);
+    HAL_UART_Transmit(&huart1,(uint8_t *) MSG_temp3, sizeof(MSG_temp3), 100);
     HAL_Delay(200);
 
 
