@@ -88,25 +88,32 @@ typedef enum {
   MAX31856_CONTINUOUS
 } max31856_conversion_mode_t;
 
-bool begin(void);
-bool conversionComplete(void);
-uint8_t  readFault(void);
-uint8_t  readRegister8(uint8_t addr);
-uint16_t readRegister16(uint8_t addr);
-uint32_t readRegister24(uint8_t addr);
-max31856_conversion_mode_t getConversionMode(void);
-max31856_thermocoupletype_t getThermocoupleType(void);
-float readCJTemperature(void);
-float readThermocoupleTemperature(void);
-void writeRegister8(uint8_t addr, uint8_t reg);
-void setConversionMode(max31856_conversion_mode_t mode);
-void setThermocoupleType(max31856_thermocoupletype_t type);
-void triggerOneShot(void);
-void setTempFaultThreshholds(float flow, float fhigh);
-void setColdJunctionFaultThreshholds(int8_t low, int8_t high);
-void setNoiseFilter(max31856_noise_filter_t noiseFilter);
-void writeRegister8(uint8_t addr, uint8_t reg);
-void readRegisterN(uint8_t addr, uint8_t buffer[], uint8_t n);
+typedef struct {
+    SPI_HandleTypeDef* hspi;              // Puntero al handle de la interfaz SPI
+    GPIO_TypeDef* cs_port;           // Puerto GPIO del pin Chip Select
+    uint16_t           cs_pin;            // Pin GPIO del Chip Select
+    max31856_conversion_mode_t conversionMode; // Modo de conversión actual del sensor
+    bool   initialized;       // Estado de inicialización del sensor
+} Max31856_HandleTypeDef;
 
+void readRegisterN(Max31856_HandleTypeDef* hmax, uint8_t addr, uint8_t buffer[], uint8_t n);
+void writeRegister8(Max31856_HandleTypeDef* hmax, uint8_t addr, uint8_t data);
+uint8_t readRegister8(Max31856_HandleTypeDef* hmax, uint8_t addr);
+uint16_t readRegister16(Max31856_HandleTypeDef* hmax, uint8_t addr);
+uint32_t readRegister24(Max31856_HandleTypeDef* hmax, uint8_t addr);
+
+bool MAX31856_Init(Max31856_HandleTypeDef* hmax, SPI_HandleTypeDef* hspi, GPIO_TypeDef* cs_port, uint16_t cs_pin);
+max31856_conversion_mode_t MAX31856_GetConversionMode(Max31856_HandleTypeDef* hmax);
+void MAX31856_SetConversionMode(Max31856_HandleTypeDef* hmax, max31856_conversion_mode_t mode);
+void MAX31856_SetThermocoupleType(Max31856_HandleTypeDef* hmax, max31856_thermocoupletype_t type);
+max31856_thermocoupletype_t MAX31856_GetThermocoupleType(Max31856_HandleTypeDef* hmax);
+uint8_t MAX31856_ReadFault(Max31856_HandleTypeDef* hmax);
+void MAX31856_SetColdJunctionFaultThreshholds(Max31856_HandleTypeDef* hmax, int8_t low, int8_t high);
+void MAX31856_SetNoiseFilter(Max31856_HandleTypeDef* hmax, max31856_noise_filter_t noiseFilter);
+void MAX31856_SetTempFaultThreshholds(Max31856_HandleTypeDef* hmax, float flow, float fhigh);
+void MAX31856_TriggerOneShot(Max31856_HandleTypeDef* hmax);
+bool MAX31856_ConversionComplete(Max31856_HandleTypeDef* hmax);
+float MAX31856_ReadCJTemperature(Max31856_HandleTypeDef* hmax);
+float MAX31856_ReadThermocoupleTemperature(Max31856_HandleTypeDef* hmax);
 
 #endif /* INC_MAX31856_H_ */

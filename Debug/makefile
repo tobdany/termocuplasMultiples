@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (11.3.rel1)
+# Toolchain: GNU Tools for STM32 (13.3.rel1)
 ################################################################################
 
 -include ../makefile.init
@@ -63,8 +63,8 @@ all: main-build
 main-build: STM32_THERMOCOUPLE_MAX3185.elf secondary-outputs
 
 # Tool invocations
-STM32_THERMOCOUPLE_MAX3185.elf STM32_THERMOCOUPLE_MAX3185.map: $(OBJS) $(USER_OBJS) D:\0-Youtube\STM32_THERMOCOUPLE_MAX3185\STM32F103C6TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "STM32_THERMOCOUPLE_MAX3185.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"D:\0-Youtube\STM32_THERMOCOUPLE_MAX3185\STM32F103C6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32_THERMOCOUPLE_MAX3185.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+STM32_THERMOCOUPLE_MAX3185.elf STM32_THERMOCOUPLE_MAX3185.map: $(OBJS) $(USER_OBJS) C:\Users\danie\OneDrive\Desktop\Practicas\Asignación\ múltiples\ termocuplas\Git\TermocuplasMultiples\termocuplasMultiples\STM32F103C6TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "STM32_THERMOCOUPLE_MAX3185.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\danie\OneDrive\Desktop\Practicas\Asignación múltiples termocuplas\Git\TermocuplasMultiples\termocuplasMultiples\STM32F103C6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32_THERMOCOUPLE_MAX3185.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

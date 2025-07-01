@@ -34,7 +34,14 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define SENSOR1_CS_PORT GPIOA
+#define SENSOR1_CS_PIN  GPIO_PIN_4 // Por ejemplo, PA4
 
+#define SENSOR2_CS_PORT GPIOA
+#define SENSOR2_CS_PIN  GPIO_PIN_0 // Por ejemplo, PA5
+
+#define SENSOR3_CS_PORT GPIOA
+#define SENSOR3_CS_PIN  GPIO_PIN_1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -46,6 +53,10 @@
 SPI_HandleTypeDef hspi1;
 
 UART_HandleTypeDef huart1;
+
+Max31856_HandleTypeDef mySensor1;
+Max31856_HandleTypeDef mySensor2;
+Max31856_HandleTypeDef mySensor3;
 
 /* USER CODE BEGIN PV */
 
@@ -97,7 +108,9 @@ int main(void)
        char MSG20[100]= "Thermocouple Low Fault\n\r";
        char MSG21[100]= "Over/Under Voltage Fault\n\r";
        char MSG22[100]= "hermocouple Open Faultn\r";
-
+       char MSG_temp1[100];
+       char MSG_temp2[100];
+       char MSG_temp3[100];
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -120,27 +133,29 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI1_Init();
   MX_USART1_UART_Init();
-  /* USER CODE BEGIN 2 */
-  if (!begin()) {
-        HAL_UART_Transmit(&huart1,(uint8_t*)MSG1,sizeof(MSG1), 100);
-        while (1) HAL_Delay(10);
-      }
-    setThermocoupleType(MAX31856_TCTYPE_K);
-    HAL_UART_Transmit(&huart1,(uint8_t*)MSG2,sizeof(MSG2), 100);
 
-  switch (getThermocoupleType() ) {
-    case MAX31856_TCTYPE_B: HAL_UART_Transmit(&huart1,(uint8_t*)MSG4,sizeof(MSG4), 100);  break;
-    case MAX31856_TCTYPE_E: HAL_UART_Transmit(&huart1,(uint8_t*)MSG5,sizeof(MSG5), 100);  break;
-    case MAX31856_TCTYPE_J: HAL_UART_Transmit(&huart1,(uint8_t*)MSG6,sizeof(MSG6), 100);  break;
-    case MAX31856_TCTYPE_K: HAL_UART_Transmit(&huart1,(uint8_t*)MSG7,sizeof(MSG7), 100);  break;
-    case MAX31856_TCTYPE_N: HAL_UART_Transmit(&huart1,(uint8_t*)MSG8,sizeof(MSG8), 100);  break;
-    case MAX31856_TCTYPE_R: HAL_UART_Transmit(&huart1,(uint8_t*)MSG9,sizeof(MSG9), 100);  break;
-    case MAX31856_TCTYPE_S: HAL_UART_Transmit(&huart1,(uint8_t*)MSG10,sizeof(MSG10), 100);  break;
-    case MAX31856_TCTYPE_T: HAL_UART_Transmit(&huart1,(uint8_t*)MSG11,sizeof(MSG11), 100);  break;
-    case MAX31856_VMODE_G8:  HAL_UART_Transmit(&huart1,(uint8_t*)MSG12,sizeof(MSG12), 100); break;
-    case MAX31856_VMODE_G32: HAL_UART_Transmit(&huart1,(uint8_t*)MSG13,sizeof(MSG13), 100); break;
-    default:  HAL_UART_Transmit(&huart1,(uint8_t*)MSG14,sizeof(MSG14), 100);break;
+
+
+
+  /* USER CODE BEGIN 2 */
+  //se queda en un bucle, si no se inicializó correctamente el SPI
+  if(HAL_SPI_Init(&hspi1) != HAL_OK){
+  	while (1) HAL_Delay(10);
+  }
+
+  //erores de inicialización para cada sensor
+  if (!MAX31856_Init(&mySensor1, &hspi1, SENSOR1_CS_PORT, SENSOR1_CS_PIN)) {
+	  HAL_UART_Transmit(&huart1,(uint8_t*)MSG1,sizeof(MSG1), 100);
     }
+    if (!MAX31856_Init(&mySensor2, &hspi1, SENSOR2_CS_PORT, SENSOR2_CS_PIN)) {
+    	HAL_UART_Transmit(&huart1,(uint8_t*)MSG1,sizeof(MSG1), 100);
+    	while (1) HAL_Delay(10);
+    }
+    if (!MAX31856_Init(&mySensor3, &hspi1, SENSOR3_CS_PORT, SENSOR3_CS_PIN)) {
+    	HAL_UART_Transmit(&huart1,(uint8_t*)MSG1,sizeof(MSG1), 100);
+    	while (1) HAL_Delay(10);
+    }
+
   HAL_Delay(2000);
   /* USER CODE END 2 */
 
@@ -151,13 +166,20 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    sprintf(MSG,"1-Cold Junction Temp: %.2f degrees Celsius\n\r",readCJTemperature());
-    sprintf(MSG0,"2-Thermocouple Temp: %.2f degrees Celsius\n\r",
-    readThermocoupleTemperature());
-    HAL_UART_Transmit(&huart1,(uint8_t *) MSG, sizeof(MSG), 100);
-    HAL_UART_Transmit(&huart1,(uint8_t *) MSG0, sizeof(MSG0), 100);
-    HAL_UART_Transmit(&huart1,(uint8_t *) MSG3, sizeof(MSG3), 100);
 
+	//se envía a la UART los valores de la temperatura
+	  sprintf(MSG_temp1,"Thermocouple 1 Temp: %.2f degrees Celsius\n\r",
+			  MAX31856_ReadThermocoupleTemperature(&mySensor1));
+	  sprintf(MSG_temp2,"Thermocouple 2 Temp: %.2f degrees Celsius\n\r",
+	  			  MAX31856_ReadThermocoupleTemperature(&mySensor2));
+	  sprintf(MSG_temp3,"Thermocouple 3 Temp: %.2f degrees Celsius\n\r",
+	  	  			  MAX31856_ReadThermocoupleTemperature(&mySensor3));
+    HAL_UART_Transmit(&huart1,(uint8_t *) MSG_temp1, sizeof(MSG), 100);
+    HAL_Delay(200);
+    HAL_UART_Transmit(&huart1,(uint8_t *) MSG_temp2, sizeof(MSG0), 100);
+    HAL_Delay(200);
+    HAL_UART_Transmit(&huart1,(uint8_t *) MSG_temp3, sizeof(MSG3), 100);
+    HAL_Delay(200);
 
 
 
