@@ -157,7 +157,12 @@ int main(void)
     HAL_UART_Transmit(&huart1,(uint8_t *) MSG, sizeof(MSG), 100);
     HAL_UART_Transmit(&huart1,(uint8_t *) MSG0, sizeof(MSG0), 100);
     HAL_UART_Transmit(&huart1,(uint8_t *) MSG3, sizeof(MSG3), 100);
-    uint8_t fault = readFault();
+
+
+
+
+
+    /*uint8_t fault = readFault();
     if (fault) {
     if (fault & MAX31856_FAULT_CJRANGE)  HAL_UART_Transmit(&huart1,(uint8_t*)MSG15,sizeof(MSG15), 100);
     if (fault & MAX31856_FAULT_TCRANGE)  HAL_UART_Transmit(&huart1,(uint8_t*)MSG16,sizeof(MSG16), 100);
@@ -170,6 +175,7 @@ int main(void)
     }
     HAL_UART_Transmit(&huart1,(uint8_t *) MSG, sizeof(MSG), 100);
     HAL_Delay(1000);
+    */
   }
   /* USER CODE END 3 */
 }
@@ -298,10 +304,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, MAX_FAULT_Pin|SPI1_CS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, SPI_CS2_Pin|SPI_CS3_Pin|MAX_FAULT_Pin|SPI1_CS_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : MAX_FAULT_Pin SPI1_CS_Pin */
-  GPIO_InitStruct.Pin = MAX_FAULT_Pin|SPI1_CS_Pin;
+  /*Configure GPIO pins : SPI_CS2_Pin SPI_CS3_Pin MAX_FAULT_Pin SPI1_CS_Pin */
+  GPIO_InitStruct.Pin = SPI_CS2_Pin|SPI_CS3_Pin|MAX_FAULT_Pin|SPI1_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
