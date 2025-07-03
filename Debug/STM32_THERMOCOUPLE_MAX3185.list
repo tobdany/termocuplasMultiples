@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000029  00000000  00000000  000081d4  2**0
                   CONTENTS, READONLY
- 12 .debug_info   00009cdc  00000000  00000000  000081fd  2**0
+ 12 .debug_info   00009cde  00000000  00000000  000081fd  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00001b7d  00000000  00000000  00011ed9  2**0
+ 13 .debug_abbrev 00001b7d  00000000  00000000  00011edb  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  14 .debug_aranges 00000968  00000000  00000000  00013a58  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  15 .debug_rnglists 00000723  00000000  00000000  000143c0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00018005  00000000  00000000  00014ae3  2**0
+ 16 .debug_macro  00018011  00000000  00000000  00014ae3  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000b341  00000000  00000000  0002cae8  2**0
+ 17 .debug_line   0000b345  00000000  00000000  0002caf4  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    00084443  00000000  00000000  00037e29  2**0
+ 18 .debug_str    000844b3  00000000  00000000  00037e39  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000bc26c  2**0
+ 19 .comment      00000043  00000000  00000000  000bc2ec  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000036b8  00000000  00000000  000bc2b0  2**2
+ 20 .debug_frame  000036bc  00000000  00000000  000bc330  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 000000a9  00000000  00000000  000bf968  2**0
+ 21 .debug_line_str 000000a9  00000000  00000000  000bf9ec  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1500,8 +1500,8 @@ float MAX31856_ReadThermocoupleTemperature(Max31856_HandleTypeDef* hmax) {
   */
 void app_main(void)
 {
- 8000e88:	b590      	push	{r4, r7, lr}
- 8000e8a:	b0cd      	sub	sp, #308	@ 0x134
+ 8000e88:	b5b0      	push	{r4, r5, r7, lr}
+ 8000e8a:	b084      	sub	sp, #16
  8000e8c:	af00      	add	r7, sp, #0
     // Check sensor initializations
     if (!MAX31856_Init(&mySensor1, &hspi1, SENSOR1_CS_PORT, SENSOR1_CS_PIN)) {
@@ -1570,106 +1570,109 @@ void app_main(void)
  8000f12:	f000 fbad 	bl	8001670 <HAL_Delay>
  8000f16:	e7fb      	b.n	8000f10 <app_main+0x88>
     }
-    HAL_Delay(20);
- 8000f18:	2014      	movs	r0, #20
+    HAL_Delay(200);
+ 8000f18:	20c8      	movs	r0, #200	@ 0xc8
  8000f1a:	f000 fba9 	bl	8001670 <HAL_Delay>
+
+    while (1)
     {
-        // A larger buffer is needed to hold all three messages plus potential separators
-        // Max chars for one line (~30) * 3 lines + separator + null terminator.
-        // 100 * 3 = 300 should be more than enough.
-        char combined_buffer[300];
-        int offset = 0; // To keep track of the current position in the combined_buffer
- 8000f1e:	2300      	movs	r3, #0
- 8000f20:	f8c7 312c 	str.w	r3, [r7, #300]	@ 0x12c
+ 8000f1e:	466b      	mov	r3, sp
+ 8000f20:	461d      	mov	r5, r3
 
-        // Format and append temperature for Sensor 1
+        char combined_buffer[TOTAL_MESSAGE_BUFFER_SIZE];
+ 8000f22:	2368      	movs	r3, #104	@ 0x68
+ 8000f24:	60fb      	str	r3, [r7, #12]
+ 8000f26:	2369      	movs	r3, #105	@ 0x69
+ 8000f28:	3307      	adds	r3, #7
+ 8000f2a:	08db      	lsrs	r3, r3, #3
+ 8000f2c:	00db      	lsls	r3, r3, #3
+ 8000f2e:	ebad 0d03 	sub.w	sp, sp, r3
+ 8000f32:	466b      	mov	r3, sp
+ 8000f34:	3300      	adds	r3, #0
+ 8000f36:	60bb      	str	r3, [r7, #8]
+        int offset = 0;
+ 8000f38:	2300      	movs	r3, #0
+ 8000f3a:	607b      	str	r3, [r7, #4]
         offset += sprintf(combined_buffer + offset, MSG_THERMO_1_PREFIX, MAX31856_ReadThermocoupleTemperature(&mySensor1));
- 8000f24:	f8d7 312c 	ldr.w	r3, [r7, #300]	@ 0x12c
- 8000f28:	463a      	mov	r2, r7
- 8000f2a:	18d4      	adds	r4, r2, r3
- 8000f2c:	4831      	ldr	r0, [pc, #196]	@ (8000ff4 <app_main+0x16c>)
- 8000f2e:	f7ff ff5f 	bl	8000df0 <MAX31856_ReadThermocoupleTemperature>
- 8000f32:	4603      	mov	r3, r0
- 8000f34:	4618      	mov	r0, r3
- 8000f36:	f7ff fa77 	bl	8000428 <__aeabi_f2d>
- 8000f3a:	4602      	mov	r2, r0
- 8000f3c:	460b      	mov	r3, r1
- 8000f3e:	4932      	ldr	r1, [pc, #200]	@ (8001008 <app_main+0x180>)
- 8000f40:	4620      	mov	r0, r4
- 8000f42:	f002 feb5 	bl	8003cb0 <siprintf>
- 8000f46:	4602      	mov	r2, r0
- 8000f48:	f8d7 312c 	ldr.w	r3, [r7, #300]	@ 0x12c
- 8000f4c:	4413      	add	r3, r2
- 8000f4e:	f8c7 312c 	str.w	r3, [r7, #300]	@ 0x12c
-
-        // Format and append temperature for Sensor 2
+ 8000f3c:	687b      	ldr	r3, [r7, #4]
+ 8000f3e:	68ba      	ldr	r2, [r7, #8]
+ 8000f40:	18d4      	adds	r4, r2, r3
+ 8000f42:	482c      	ldr	r0, [pc, #176]	@ (8000ff4 <app_main+0x16c>)
+ 8000f44:	f7ff ff54 	bl	8000df0 <MAX31856_ReadThermocoupleTemperature>
+ 8000f48:	4603      	mov	r3, r0
+ 8000f4a:	4618      	mov	r0, r3
+ 8000f4c:	f7ff fa6c 	bl	8000428 <__aeabi_f2d>
+ 8000f50:	4602      	mov	r2, r0
+ 8000f52:	460b      	mov	r3, r1
+ 8000f54:	492c      	ldr	r1, [pc, #176]	@ (8001008 <app_main+0x180>)
+ 8000f56:	4620      	mov	r0, r4
+ 8000f58:	f002 feaa 	bl	8003cb0 <siprintf>
+ 8000f5c:	4602      	mov	r2, r0
+ 8000f5e:	687b      	ldr	r3, [r7, #4]
+ 8000f60:	4413      	add	r3, r2
+ 8000f62:	607b      	str	r3, [r7, #4]
         offset += sprintf(combined_buffer + offset, MSG_THERMO_2_PREFIX, MAX31856_ReadThermocoupleTemperature(&mySensor2));
- 8000f52:	f8d7 312c 	ldr.w	r3, [r7, #300]	@ 0x12c
- 8000f56:	463a      	mov	r2, r7
- 8000f58:	18d4      	adds	r4, r2, r3
- 8000f5a:	4829      	ldr	r0, [pc, #164]	@ (8001000 <app_main+0x178>)
- 8000f5c:	f7ff ff48 	bl	8000df0 <MAX31856_ReadThermocoupleTemperature>
- 8000f60:	4603      	mov	r3, r0
- 8000f62:	4618      	mov	r0, r3
- 8000f64:	f7ff fa60 	bl	8000428 <__aeabi_f2d>
- 8000f68:	4602      	mov	r2, r0
- 8000f6a:	460b      	mov	r3, r1
- 8000f6c:	4927      	ldr	r1, [pc, #156]	@ (800100c <app_main+0x184>)
- 8000f6e:	4620      	mov	r0, r4
- 8000f70:	f002 fe9e 	bl	8003cb0 <siprintf>
- 8000f74:	4602      	mov	r2, r0
- 8000f76:	f8d7 312c 	ldr.w	r3, [r7, #300]	@ 0x12c
- 8000f7a:	4413      	add	r3, r2
- 8000f7c:	f8c7 312c 	str.w	r3, [r7, #300]	@ 0x12c
-
-        // Format and append temperature for Sensor 3
+ 8000f64:	687b      	ldr	r3, [r7, #4]
+ 8000f66:	68ba      	ldr	r2, [r7, #8]
+ 8000f68:	18d4      	adds	r4, r2, r3
+ 8000f6a:	4825      	ldr	r0, [pc, #148]	@ (8001000 <app_main+0x178>)
+ 8000f6c:	f7ff ff40 	bl	8000df0 <MAX31856_ReadThermocoupleTemperature>
+ 8000f70:	4603      	mov	r3, r0
+ 8000f72:	4618      	mov	r0, r3
+ 8000f74:	f7ff fa58 	bl	8000428 <__aeabi_f2d>
+ 8000f78:	4602      	mov	r2, r0
+ 8000f7a:	460b      	mov	r3, r1
+ 8000f7c:	4923      	ldr	r1, [pc, #140]	@ (800100c <app_main+0x184>)
+ 8000f7e:	4620      	mov	r0, r4
+ 8000f80:	f002 fe96 	bl	8003cb0 <siprintf>
+ 8000f84:	4602      	mov	r2, r0
+ 8000f86:	687b      	ldr	r3, [r7, #4]
+ 8000f88:	4413      	add	r3, r2
+ 8000f8a:	607b      	str	r3, [r7, #4]
         offset += sprintf(combined_buffer + offset, MSG_THERMO_3_PREFIX, MAX31856_ReadThermocoupleTemperature(&mySensor3));
- 8000f80:	f8d7 312c 	ldr.w	r3, [r7, #300]	@ 0x12c
- 8000f84:	463a      	mov	r2, r7
- 8000f86:	18d4      	adds	r4, r2, r3
- 8000f88:	481e      	ldr	r0, [pc, #120]	@ (8001004 <app_main+0x17c>)
- 8000f8a:	f7ff ff31 	bl	8000df0 <MAX31856_ReadThermocoupleTemperature>
- 8000f8e:	4603      	mov	r3, r0
- 8000f90:	4618      	mov	r0, r3
- 8000f92:	f7ff fa49 	bl	8000428 <__aeabi_f2d>
- 8000f96:	4602      	mov	r2, r0
- 8000f98:	460b      	mov	r3, r1
- 8000f9a:	491d      	ldr	r1, [pc, #116]	@ (8001010 <app_main+0x188>)
- 8000f9c:	4620      	mov	r0, r4
- 8000f9e:	f002 fe87 	bl	8003cb0 <siprintf>
- 8000fa2:	4602      	mov	r2, r0
- 8000fa4:	f8d7 312c 	ldr.w	r3, [r7, #300]	@ 0x12c
- 8000fa8:	4413      	add	r3, r2
- 8000faa:	f8c7 312c 	str.w	r3, [r7, #300]	@ 0x12c
-
-        // Optional: Add a separator line at the end of each full transmission
+ 8000f8c:	687b      	ldr	r3, [r7, #4]
+ 8000f8e:	68ba      	ldr	r2, [r7, #8]
+ 8000f90:	18d4      	adds	r4, r2, r3
+ 8000f92:	481c      	ldr	r0, [pc, #112]	@ (8001004 <app_main+0x17c>)
+ 8000f94:	f7ff ff2c 	bl	8000df0 <MAX31856_ReadThermocoupleTemperature>
+ 8000f98:	4603      	mov	r3, r0
+ 8000f9a:	4618      	mov	r0, r3
+ 8000f9c:	f7ff fa44 	bl	8000428 <__aeabi_f2d>
+ 8000fa0:	4602      	mov	r2, r0
+ 8000fa2:	460b      	mov	r3, r1
+ 8000fa4:	491a      	ldr	r1, [pc, #104]	@ (8001010 <app_main+0x188>)
+ 8000fa6:	4620      	mov	r0, r4
+ 8000fa8:	f002 fe82 	bl	8003cb0 <siprintf>
+ 8000fac:	4602      	mov	r2, r0
+ 8000fae:	687b      	ldr	r3, [r7, #4]
+ 8000fb0:	4413      	add	r3, r2
+ 8000fb2:	607b      	str	r3, [r7, #4]
         offset += sprintf(combined_buffer + offset, MSG_LINE_SEPARATOR);
- 8000fae:	f8d7 312c 	ldr.w	r3, [r7, #300]	@ 0x12c
- 8000fb2:	463a      	mov	r2, r7
- 8000fb4:	4413      	add	r3, r2
- 8000fb6:	4917      	ldr	r1, [pc, #92]	@ (8001014 <app_main+0x18c>)
- 8000fb8:	4618      	mov	r0, r3
- 8000fba:	f002 fe79 	bl	8003cb0 <siprintf>
- 8000fbe:	4602      	mov	r2, r0
- 8000fc0:	f8d7 312c 	ldr.w	r3, [r7, #300]	@ 0x12c
- 8000fc4:	4413      	add	r3, r2
- 8000fc6:	f8c7 312c 	str.w	r3, [r7, #300]	@ 0x12c
+ 8000fb4:	687b      	ldr	r3, [r7, #4]
+ 8000fb6:	68ba      	ldr	r2, [r7, #8]
+ 8000fb8:	4413      	add	r3, r2
+ 8000fba:	4916      	ldr	r1, [pc, #88]	@ (8001014 <app_main+0x18c>)
+ 8000fbc:	4618      	mov	r0, r3
+ 8000fbe:	f002 fe77 	bl	8003cb0 <siprintf>
+ 8000fc2:	4602      	mov	r2, r0
+ 8000fc4:	687b      	ldr	r3, [r7, #4]
+ 8000fc6:	4413      	add	r3, r2
+ 8000fc8:	607b      	str	r3, [r7, #4]
 
-        // Transmit the entire combined string at once
         HAL_UART_Transmit(&huart1, (uint8_t*)combined_buffer, strlen(combined_buffer), HAL_MAX_DELAY);
- 8000fca:	463b      	mov	r3, r7
- 8000fcc:	4618      	mov	r0, r3
- 8000fce:	f7ff f8bf 	bl	8000150 <strlen>
- 8000fd2:	4603      	mov	r3, r0
- 8000fd4:	b29a      	uxth	r2, r3
- 8000fd6:	4639      	mov	r1, r7
- 8000fd8:	f04f 33ff 	mov.w	r3, #4294967295
- 8000fdc:	4807      	ldr	r0, [pc, #28]	@ (8000ffc <app_main+0x174>)
- 8000fde:	f001 ffcb 	bl	8002f78 <HAL_UART_Transmit>
+ 8000fca:	68b8      	ldr	r0, [r7, #8]
+ 8000fcc:	f7ff f8c0 	bl	8000150 <strlen>
+ 8000fd0:	4603      	mov	r3, r0
+ 8000fd2:	b29a      	uxth	r2, r3
+ 8000fd4:	f04f 33ff 	mov.w	r3, #4294967295
+ 8000fd8:	68b9      	ldr	r1, [r7, #8]
+ 8000fda:	4808      	ldr	r0, [pc, #32]	@ (8000ffc <app_main+0x174>)
+ 8000fdc:	f001 ffcc 	bl	8002f78 <HAL_UART_Transmit>
 
-        HAL_Delay(10); // Increased delay for readability, adjust as needed
- 8000fe2:	200a      	movs	r0, #10
- 8000fe4:	f000 fb44 	bl	8001670 <HAL_Delay>
+        HAL_Delay(20);
+ 8000fe0:	2014      	movs	r0, #20
+ 8000fe2:	f000 fb45 	bl	8001670 <HAL_Delay>
+ 8000fe6:	46ad      	mov	sp, r5
     {
  8000fe8:	bf00      	nop
  8000fea:	e798      	b.n	8000f1e <app_main+0x96>

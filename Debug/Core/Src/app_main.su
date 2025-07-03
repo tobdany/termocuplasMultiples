@@ -1,1 +1,1 @@
-../Core/Src/app_main.c:36:6:app_main	320	static
+../Core/Src/app_main.c:42:6:app_main	144	dynamic,bounded
