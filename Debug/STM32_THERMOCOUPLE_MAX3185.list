@@ -1643,8 +1643,8 @@ void app_main(void)
  8000fb0:	4807      	ldr	r0, [pc, #28]	@ (8000fd0 <app_main+0x148>)
  8000fb2:	f001 ffc9 	bl	8002f48 <HAL_UART_Transmit>
 
-        HAL_Delay(200);
- 8000fb6:	20c8      	movs	r0, #200	@ 0xc8
+        HAL_Delay(10);
+ 8000fb6:	200a      	movs	r0, #10
  8000fb8:	f000 fb42 	bl	8001640 <HAL_Delay>
     {
  8000fbc:	bf00      	nop

@@ -14,7 +14,7 @@
 #define SENSOR3_CS_PORT GPIOA
 #define SENSOR3_CS_PIN  GPIO_PIN_1
 
-
+//Estructura para cada sensor
 Max31856_HandleTypeDef mySensor1;
 Max31856_HandleTypeDef mySensor2;
 Max31856_HandleTypeDef mySensor3;
@@ -67,7 +67,8 @@ void app_main(void)
         sprintf(temp_buffer, MSG_THERMO_3_PREFIX, MAX31856_ReadThermocoupleTemperature(&mySensor3));
         HAL_UART_Transmit(&huart1, (uint8_t*)temp_buffer, strlen(temp_buffer), HAL_MAX_DELAY);
 
-        HAL_Delay(200);
+        HAL_Delay(10);
+
 
     }
 }
