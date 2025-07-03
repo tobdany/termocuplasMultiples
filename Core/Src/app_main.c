@@ -66,7 +66,7 @@ void app_main(void)
         offset += sprintf(combined_buffer + offset, MSG_THERMO_3_PREFIX, MAX31856_ReadThermocoupleTemperature(&mySensor3));
         offset += sprintf(combined_buffer + offset, MSG_LINE_SEPARATOR);
 */
-        char combined_buffer[5]="11\n";
+        char combined_buffer[8]="11\n\r";
         HAL_UART_Transmit(&huart1, (uint8_t*)combined_buffer, strlen(combined_buffer), HAL_MAX_DELAY);
 
         HAL_Delay(20);

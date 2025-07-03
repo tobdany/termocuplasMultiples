@@ -29,23 +29,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
  12 .debug_info   00009c96  00000000  00000000  000071fd  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00001b6e  00000000  00000000  00010e93  2**0
+ 13 .debug_abbrev 00001b65  00000000  00000000  00010e93  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000968  00000000  00000000  00012a08  2**3
+ 14 .debug_aranges 00000968  00000000  00000000  000129f8  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 00000723  00000000  00000000  00013370  2**0
+ 15 .debug_rnglists 00000723  00000000  00000000  00013360  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00018011  00000000  00000000  00013a93  2**0
+ 16 .debug_macro  00018011  00000000  00000000  00013a83  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000b2fd  00000000  00000000  0002baa4  2**0
+ 17 .debug_line   0000b2fd  00000000  00000000  0002ba94  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000844a4  00000000  00000000  00036da1  2**0
+ 18 .debug_str    000844a4  00000000  00000000  00036d91  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000bb245  2**0
+ 19 .comment      00000043  00000000  00000000  000bb235  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  0000350c  00000000  00000000  000bb288  2**2
+ 20 .debug_frame  0000350c  00000000  00000000  000bb278  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 000000a9  00000000  00000000  000be794  2**0
+ 21 .debug_line_str 000000a9  00000000  00000000  000be784  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1289,11 +1289,11 @@ void app_main(void)
         offset += sprintf(combined_buffer + offset, MSG_THERMO_3_PREFIX, MAX31856_ReadThermocoupleTemperature(&mySensor3));
         offset += sprintf(combined_buffer + offset, MSG_LINE_SEPARATOR);
 */
-        char combined_buffer[5]="11\n";
+        char combined_buffer[8]="11\n\r";
  8000d14:	4b10      	ldr	r3, [pc, #64]	@ (8000d58 <app_main+0xd4>)
  8000d16:	603b      	str	r3, [r7, #0]
  8000d18:	2300      	movs	r3, #0
- 8000d1a:	713b      	strb	r3, [r7, #4]
+ 8000d1a:	607b      	str	r3, [r7, #4]
         HAL_UART_Transmit(&huart1, (uint8_t*)combined_buffer, strlen(combined_buffer), HAL_MAX_DELAY);
  8000d1c:	463b      	mov	r3, r7
  8000d1e:	4618      	mov	r0, r3
@@ -1318,7 +1318,7 @@ void app_main(void)
  8000d4c:	2000026c 	.word	0x2000026c
  8000d50:	200001fc 	.word	0x200001fc
  8000d54:	20000208 	.word	0x20000208
- 8000d58:	000a3131 	.word	0x000a3131
+ 8000d58:	0d0a3131 	.word	0x0d0a3131
 
 08000d5c <main>:
 /**
