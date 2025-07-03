@@ -23,7 +23,7 @@ bool MAX31856_Init(Max31856_HandleTypeDef* hmax, SPI_HandleTypeDef* hspi, GPIO_T
   writeRegister8(hmax, MAX31856_CJTO_REG, 0x0);
 
   MAX31856_SetThermocoupleType(hmax, MAX31856_TCTYPE_K);
-  MAX31856_SetConversionMode(hmax, MAX31856_ONESHOT);
+  MAX31856_SetConversionMode(hmax, MAX31856_CONTINUOUS);
 
   return hmax->initialized;
 }
