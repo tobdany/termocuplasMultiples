@@ -22,26 +22,14 @@ extern SPI_HandleTypeDef hspi1;
 extern UART_HandleTypeDef huart1;
 
 const char MSG_INIT_ERROR[] = "Error: Could not initialize thermocouple\n\r";
-const char MSG_THERMO_1_PREFIX[] = "Thermo 1: %.2f C\n\r";
-const char MSG_THERMO_2_PREFIX[] = "Thermo 2: %.2f C\n\r";
-const char MSG_THERMO_3_PREFIX[] = "Thermo 3: %.2f C\n\r";
-const char MSG_LINE_SEPARATOR[] = "---------------------------\n\r"; // Optional separator
+const char MSG_THERMO_PREFIX[] = "T1: %.2f, T2: %.2f, T3: %.2f C\n\r";
+
+// Puedes aumentar el buffer para estar seguro
+#define TOTAL_MESSAGE_BUFFER_SIZE (64)
 
 
-#define MAX_TEMP_LINE_LENGTH (25)
-
-// Calcular el tamaño total del buffer
-#define TOTAL_MESSAGE_BUFFER_SIZE (MAX_TEMP_LINE_LENGTH * 3 + strlen(MSG_LINE_SEPARATOR) + 1)
-
-
-/**
-  * @brief  Función principal de la aplicación.
-  * Contiene la lógica de inicialización de sensores y el bucle infinito.
-  * @retval None
-  */
 void app_main(void)
 {
-    // Check sensor initializations
     if (!MAX31856_Init(&mySensor1, &hspi1, SENSOR1_CS_PORT, SENSOR1_CS_PIN)) {
         HAL_UART_Transmit(&huart1, (uint8_t*)MSG_INIT_ERROR, strlen(MSG_INIT_ERROR), HAL_MAX_DELAY);
         while (1) HAL_Delay(10);
@@ -54,19 +42,21 @@ void app_main(void)
         HAL_UART_Transmit(&huart1, (uint8_t*)MSG_INIT_ERROR, strlen(MSG_INIT_ERROR), HAL_MAX_DELAY);
         while (1) HAL_Delay(10);
     }
+
     HAL_Delay(200);
+
+    float temp1, temp2, temp3;
+    char combined_buffer[TOTAL_MESSAGE_BUFFER_SIZE];
 
     while (1)
     {
+        temp1 = MAX31856_ReadThermocoupleTemperature(&mySensor1);
+        temp2 = MAX31856_ReadThermocoupleTemperature(&mySensor2);
+        temp3 = MAX31856_ReadThermocoupleTemperature(&mySensor3);
 
-    	char combined_buffer[TOTAL_MESSAGE_BUFFER_SIZE];
-        int offset = 0;
-        offset += sprintf(combined_buffer + offset, MSG_THERMO_1_PREFIX, MAX31856_ReadThermocoupleTemperature(&mySensor1));
-        offset += sprintf(combined_buffer + offset, MSG_THERMO_2_PREFIX, MAX31856_ReadThermocoupleTemperature(&mySensor2));
-        offset += sprintf(combined_buffer + offset, MSG_THERMO_3_PREFIX, MAX31856_ReadThermocoupleTemperature(&mySensor3));
-        offset += sprintf(combined_buffer + offset, MSG_LINE_SEPARATOR);
+        sprintf(combined_buffer, MSG_THERMO_PREFIX, temp1, temp2, temp3);
         HAL_UART_Transmit(&huart1, (uint8_t*)combined_buffer, strlen(combined_buffer), HAL_MAX_DELAY);
 
-        HAL_Delay(20);
+        // HAL_Delay(20); // opcional
     }
 }
